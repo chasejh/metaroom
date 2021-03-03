@@ -11,10 +11,9 @@
 			<button id="startButton">Play</button>
 		</div>
 		<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webaudio - sandbox<br/>
-			music by <a href="http://www.newgrounds.com/audio/listen/358232" target="_blank" rel="noopener">larrylarrybb</a>,
-			<a href="http://www.newgrounds.com/audio/listen/376737" target="_blank" rel="noopener">skullbeatz</a> and
-			<a href="http://opengameart.org/content/project-utopia-seamless-loop" target="_blank" rel="noopener">congusbongus</a><br/><br/>
+			"i am sitting in a room" by <a href="https://www.discogs.com/artist/9297-Alvin-Lucier" target="_blank" rel="noopener">Alvin Lucier</a>,
+			<br/><br/>
+			using <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webaudio - sandbox<br/>
 			navigate with WASD / arrows / mouse
 		</div>
 
@@ -49,6 +48,7 @@
 				camera.add( listener );
 
 				scene = new THREE.Scene();
+				//scene.background = new THREE.Color( 0xf2f7ff );
 				scene.fog = new THREE.FogExp2( 0x000000, 0.0025 );
 
 				light = new THREE.DirectionalLight( 0xffffff );
@@ -70,7 +70,7 @@
 				scene.add( mesh1 );
 
 				const sound1 = new THREE.PositionalAudio( listener );
-				audioLoader.load( 'sounds/alien.wav', function ( buffer ) {
+				audioLoader.load( 'sounds/Room0.mp3', function ( buffer ) {
 
 					sound1.setBuffer( buffer );
 					sound1.setRefDistance( 20 );
@@ -86,7 +86,7 @@
 				scene.add( mesh2 );
 
 				const sound2 = new THREE.PositionalAudio( listener );
-				audioLoader.load( 'sounds/376737_Skullbeatz___Bad_Cat_Maste.ogg', function ( buffer ) {
+				audioLoader.load( 'sounds/Room5.mp3', function ( buffer ) {
 
 					sound2.setBuffer( buffer );
 					sound2.setRefDistance( 20 );
@@ -120,7 +120,7 @@
 				// global ambient audio
 
 				const sound4 = new THREE.Audio( listener );
-				audioLoader.load( 'sounds/Project_Utopia.ogg', function ( buffer ) {
+				audioLoader.load( 'sounds/Room11.mp3', function ( buffer ) {
 
 					sound4.setBuffer( buffer );
 					sound4.setLoop( true );
