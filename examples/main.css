@@ -1,7 +1,7 @@
 body {
 	margin: 0;
-	background-color: #000;
-	color: #fff;
+	background: rgb(255, 255, 255);
+	color: rgb(11, 11, 11);
 	font-family: Monospace;
 	font-size: 13px;
 	line-height: 24px;
@@ -9,7 +9,7 @@ body {
 }
 
 a {
-	color: #ff0;
+	color: rgb(157, 0, 255);
 	text-decoration: none;
 }
 
@@ -61,7 +61,7 @@ a, button, input, select {
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
-	background: rgba(0,0,0,0.7);
+	background: radial-gradient(#f69d3c7d, #3f87a687);
 }
 
 	#overlay button {

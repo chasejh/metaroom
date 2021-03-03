@@ -27,9 +27,9 @@
 
 			let camera, controls, scene, renderer, light;
 
-			let material1, material2, material3;
+			let material1, material2, material3, materialA, materialB, materialC;
 
-			let analyser1, analyser2, analyser3;
+			let analyser1, analyser2, analyser3, analyserA;
 
 			const clock = new THREE.Clock();
 
@@ -48,24 +48,30 @@
 				camera.add( listener );
 
 				scene = new THREE.Scene();
-				//scene.background = new THREE.Color( 0xf2f7ff );
-				scene.fog = new THREE.FogExp2( 0x000000, 0.0025 );
+				scene.background = new THREE.Color("#aecfda");
+				//scene.fog = new THREE.FogExp2( 0x000000, 0.0025 );
 
-				light = new THREE.DirectionalLight( 0xffffff );
-				light.position.set( 0, 0.5, 1 ).normalize();
+				light = new THREE.DirectionalLight( 0xffffff, 1 );
+				light.position.set( 0, 1, 1.5 ).normalize();
 				scene.add( light );
 
 				const sphere = new THREE.SphereGeometry( 20, 32, 16 );
 
+				const texLoader = new THREE.TextureLoader();
+
 				material1 = new THREE.MeshPhongMaterial( { color: 0xffaa00, flatShading: true, shininess: 0 } );
 				material2 = new THREE.MeshPhongMaterial( { color: 0xff2200, flatShading: true, shininess: 0 } );
 				material3 = new THREE.MeshPhongMaterial( { color: 0x6622aa, flatShading: true, shininess: 0 } );
-
+				materialA = new THREE.MeshPhongMaterial( { map: texLoader.load('textures/album0.jpg', THREE.SphericalRefractionMapping) } );
+				materialB = new THREE.MeshPhongMaterial( { map: texLoader.load('textures/album1.jpg', THREE.SphericalRefractionMapping) } );
+				materialC = new THREE.MeshPhongMaterial( { map: texLoader.load('textures/album2.jpg', THREE.SphericalRefractionMapping) } );
+				
+				
 				// sound spheres
 
 				const audioLoader = new THREE.AudioLoader();
 
-				const mesh1 = new THREE.Mesh( sphere, material1 );
+				const mesh1 = new THREE.Mesh( sphere, materialA );
 				mesh1.position.set( - 250, 30, 0 );
 				scene.add( mesh1 );
 
@@ -74,15 +80,15 @@
 
 					sound1.setBuffer( buffer );
 					sound1.setRefDistance( 20 );
+					sound3.setLoop( true );
 					sound1.play();
 
 				} );
 				mesh1.add( sound1 );
 
-				//
-
-				const mesh2 = new THREE.Mesh( sphere, material2 );
+				const mesh2 = new THREE.Mesh( sphere, materialB );
 				mesh2.position.set( 250, 30, 0 );
+				//mesh2.rotateZ(Math.PI / 2);
 				scene.add( mesh2 );
 
 				const sound2 = new THREE.PositionalAudio( listener );
@@ -90,25 +96,25 @@
 
 					sound2.setBuffer( buffer );
 					sound2.setRefDistance( 20 );
+					sound3.setLoop( true );
 					sound2.play();
 
 				} );
 				mesh2.add( sound2 );
 
-				//
-
-				const mesh3 = new THREE.Mesh( sphere, material3 );
+				const mesh3 = new THREE.Mesh( sphere, materialC );
 				mesh3.position.set( 0, 30, - 250 );
 				scene.add( mesh3 );
 
 				const sound3 = new THREE.PositionalAudio( listener );
-				const oscillator = listener.context.createOscillator();
-				oscillator.type = 'sine';
-				oscillator.frequency.setValueAtTime( 144, sound3.context.currentTime );
-				oscillator.start( 0 );
-				sound3.setNodeSource( oscillator );
-				sound3.setRefDistance( 20 );
-				sound3.setVolume( 0.5 );
+				audioLoader.load( 'sounds/Room11.mp3', function ( buffer ) {
+
+					sound3.setBuffer( buffer );
+					sound3.setRefDistance( 20 );
+					sound3.setLoop( true );
+					sound3.play();
+
+				} );
 				mesh3.add( sound3 );
 
 				// analysers
@@ -118,23 +124,25 @@
 				analyser3 = new THREE.AudioAnalyser( sound3, 32 );
 
 				// global ambient audio
-
 				const sound4 = new THREE.Audio( listener );
-				audioLoader.load( 'sounds/Room11.mp3', function ( buffer ) {
-
-					sound4.setBuffer( buffer );
-					sound4.setLoop( true );
-					sound4.setVolume( 0.5 );
-					sound4.play();
-
-				} );
+				const oscillator = listener.context.createOscillator();
+				oscillator.type = 'sine';
+				oscillator.frequency.setValueAtTime( 144, sound4.context.currentTime );
+				sound4.setVolume( 0.2 );
+				oscillator.start( 0 );
+				sound4.setNodeSource( oscillator );
 
 				// ground
-
-				const helper = new THREE.GridHelper( 1000, 10, 0x444444, 0x444444 );
-				helper.position.y = 0.1;
-				scene.add( helper );
-
+				//const helper = new THREE.GridHelper( 1000, 10, 0x444444, 0x444444 );
+				//helper.position.y = 0.1;
+				//scene.add( helper );
+				let floorTex = texLoader.load('textures/waterdudv.jpg');
+				const pGeometry = new THREE.PlaneGeometry( 1000, 1000, 100 );
+				const pMaterial = new THREE.MeshBasicMaterial( {map: floorTex, side: THREE.DoubleSide} );
+				let plane = new THREE.Mesh( pGeometry, pMaterial );
+				plane.rotateX( Math.PI / 2);
+				plane.translateY( 1.5 )
+				scene.add( plane );
 				//
 
 				const SoundControls = function () {
@@ -181,7 +189,7 @@
 					sound3.setVolume( soundControls.thirdSphere );
 
 				} );
-				volumeFolder.add( soundControls, 'Ambient' ).min( 0.0 ).max( 1.0 ).step( 0.01 ).onChange( function () {
+				volumeFolder.add( soundControls, 'Ambient' ).min( 0.0 ).max( .5 ).step( 0.01 ).onChange( function () {
 
 					sound4.setVolume( soundControls.Ambient );
 
@@ -212,7 +220,7 @@
 				controls = new FirstPersonControls( camera, renderer.domElement );
 
 				controls.movementSpeed = 70;
-				controls.lookSpeed = 0.05;
+				controls.lookSpeed = 0.025;
 				controls.noFly = true;
 				controls.lookVertical = false;
 
